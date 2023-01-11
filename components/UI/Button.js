@@ -44,6 +44,6 @@ const styles = StyleSheet.create({
         opacity: 0.3,
         backgroundColor: GlobalStyles.colors.accent500,
         borderRadius: 10,
-        color: "yellow",
+        color: "white",
     },
 });

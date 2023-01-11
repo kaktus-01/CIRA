@@ -1,22 +1,88 @@
 import { useNavigation } from "@react-navigation/native";
 import { Camera, CameraType, FlashMode } from "expo-camera";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Text, View, Button, TouchableOpacity, StyleSheet } from "react-native";
 import { IconComponentProvider, Icon } from "@react-native-material/core";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const CameraScreen = () => {
     const navigation = useNavigation();
-    const [type, setType] = useState(CameraType.back);
-    const [permission, requestPermission] = Camera.useCameraPermissions();
+    const [hasPermission, setHasPermission] = useState(null);
+    const [cameraType, setCameraType] = useState(CameraType.back);
+    const [isPreview, setIsPreview] = useState(false);
+    const [isCameraReady, setIsCameraReady] = useState(false);
     const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
+    const cameraRef = useRef();
 
-    if (!permission) {
+    useEffect(() => {
+        (async () => {
+            const { status } = await Camera.requestCameraPermissionsAsync();
+            setHasPermission(status === "granted");
+        })();
+    }, []);
+
+    const onCameraReady = () => {
+        setIsCameraReady(true);
+    };
+
+    function toggleCameraType() {
+        setCameraType((current) =>
+            current === CameraType.back ? CameraType.front : CameraType.back
+        );
+    }
+
+    const takePicture = async () => {
+        if (cameraRef.current) {
+            const options = {
+                quality: 0.5,
+                base64: true,
+                skipProcessing: true,
+            };
+            const data = await cameraRef.current.takePictureAsync(options);
+            const source = data.uri;
+            if (source) {
+                await cameraRef.current.pausePreview();
+                setIsPreview(true);
+                console.log("picture source", source);
+            }
+        }
+    };
+
+    const cancelPreview = async () => {
+        await cameraRef.current.resumePreview();
+        setIsPreview(false);
+        setVideoSource(null);
+    };
+
+    const renderCancelPreviewButton = () => (
+        <TouchableOpacity onPress={cancelPreview} style={styles.closeButton}>
+            <View
+                style={[
+                    styles.closeCross,
+                    { transform: [{ rotate: "45deg" }] },
+                ]}
+            />
+            <View
+                style={[
+                    styles.closeCross,
+                    { transform: [{ rotate: "-45deg" }] },
+                ]}
+            />
+        </TouchableOpacity>
+    );
+
+    function toggleCameraType() {
+        setCameraType((current) =>
+            current === CameraType.back ? CameraType.front : CameraType.back
+        );
+    }
+
+    if (hasPermission === null) {
         // Camera permissions are still loading
         return <View />;
     }
 
-    if (!permission.granted) {
+    if (hasPermission === false) {
         // Camera permissions are not granted yet
         return (
             <View
@@ -29,14 +95,8 @@ const CameraScreen = () => {
                 <Text style={{ fontFamily: "Futura", fontSize: 17 }}>
                     We need your permission to show the camera
                 </Text>
-                <Button onPress={requestPermission} title="Use Camera" />
+                <Button onPress={setHasPermission} title="Use Camera" />
             </View>
-        );
-    }
-
-    function toggleCameraType() {
-        setType((current) =>
-            current === CameraType.back ? CameraType.front : CameraType.back
         );
     }
 
@@ -48,7 +108,13 @@ const CameraScreen = () => {
                 justifyContent: "center",
             }}
         >
-            <Camera type={type} flashMode={flash} style={{ flex: 1 }}>
+            <Camera
+                ref={cameraRef}
+                type={cameraType}
+                flashMode={flash}
+                style={{ flex: 1 }}
+                onCameraReady={onCameraReady}
+            >
                 <View
                     style={{
                         flex: 1,
@@ -104,6 +170,8 @@ const CameraScreen = () => {
                         }}
                     >
                         <TouchableOpacity
+                            disabled={!isCameraReady}
+                            onPress={takePicture}
                             style={{
                                 width: 70,
                                 height: 70,

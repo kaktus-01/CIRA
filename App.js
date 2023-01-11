@@ -1,6 +1,5 @@
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ManageIssues from "./screens/ManageIssues";
 import RecentIssues from "./screens/RecentIssues";
@@ -9,9 +8,55 @@ import { GlobalStyles } from "./constants/styles";
 import { Ionicons } from "@expo/vector-icons";
 import IconButton from "./components/UI/IconButton";
 import IssuesContextProvider from "./store/issues-context";
+import CameraScreen from "./screens/CameraScreen";
+
+import { StyleSheet, Text, View } from "react-native";
+
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const BottomTabs = createBottomTabNavigator();
 
 const Stack = createNativeStackNavigator();
-const BottomTabs = createBottomTabNavigator();
+
+function AuthStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: "blue",
+                },
+                headerTintColor: "white",
+                contentStyle: { backgroundColor: "blue" },
+            }}
+        >
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+        </Stack.Navigator>
+    );
+}
+
+function AuthenticationStack() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: { backgroundColor: "blue" },
+                headerTintColor: "white",
+                contentStyle: { backgroundColor: "blue" },
+            }}
+        >
+            <Stack.Screen name="Welcome" component={WelcomeScreen} />
+            /* SCREENS FROM CIRACopy */
+        </Stack.Navigator>
+    );
+}
+
+function Navigation() {
+    return (
+        <NavigationContainer>
+            <AuthStack />
+        </NavigationContainer>
+    );
+}
 
 function IssuesOverview() {
     return (
@@ -45,6 +90,17 @@ function IssuesOverview() {
                     tabBarLabel: "Recent",
                     tabBarIcon: ({ color, size }) => (
                         <Ionicons name="hourglass" size={size} color={color} />
+                    ),
+                }}
+            />
+            <BottomTabs.Screen
+                name="Camera"
+                component={CameraScreen}
+                options={{
+                    title: "Camera",
+                    tabBarLabel: "Camera",
+                    tabBarIcon: ({ color, size }) => (
+                        <Ionicons name="camera" size={size} color={color} />
                     ),
                 }}
             />
@@ -93,3 +149,12 @@ export default function App() {
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#fff",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+});

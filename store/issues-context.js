@@ -1,48 +1,20 @@
 import { createContext, useReducer } from "react";
 
-const DUMMY_ISSUES = [
-    {
-        id: "i1",
-        description: "A pothole",
-        severity: "mid",
-        date: new Date("2022-12-11"),
-        resolved: "resolved",
-    },
-    {
-        id: "i2",
-        description: "Garbage on street",
-        severity: "low",
-        date: new Date("2010-10-10"),
-        resolved: "unresolved",
-    },
-    {
-        id: "i3",
-        description: "Broken traffic sign",
-        severity: "high",
-        date: new Date("2022-12-24"),
-        resolved: "unresolved",
-    },
-    {
-        id: "i4",
-        description: "Trash",
-        severity: "low",
-        date: new Date("2023-12-11"),
-        resolved: "unresolved",
-    },
-];
-
 export const IssuesContext = createContext({
     issues: [],
-    addIssue: ({ description, date }) => {},
+    addIssue: ({ description, date, title, geolocation, status }) => {},
+    setIssues: (issues) => {},
     deleteIssue: (id) => {},
-    updateIssue: (id, { description, date }) => {},
+    updateIssue: (id, { description, date, title, geolocation, status }) => {},
 });
 
 function issuesReducer(state, action) {
     switch (action.type) {
         case "ADD":
-            const id = new Date().toString() + Math.random().toString();
-            return [{ ...action.payload, id: id }, ...state];
+            return [action.payload, ...state];
+        case "SET":
+            const inverted = action.payload.reverse();
+            return action.payload;
         case "UPDATE":
             const updatableIssueIndex = state.findIndex(
                 (issue) => issue.id === action.payload.id
@@ -60,10 +32,14 @@ function issuesReducer(state, action) {
 }
 
 function IssuesContextProvider({ children }) {
-    const [issuesState, dispatch] = useReducer(issuesReducer, DUMMY_ISSUES);
+    const [issuesState, dispatch] = useReducer(issuesReducer, []);
 
     function addIssue(issueData) {
         dispatch({ type: "ADD", payload: issueData });
+    }
+
+    function setIssues(issues) {
+        dispatch({ type: "SET", payload: issues });
     }
 
     function deleteIssue(id) {
@@ -76,6 +52,7 @@ function IssuesContextProvider({ children }) {
 
     const value = {
         issues: issuesState,
+        setIssues: setIssues,
         addIssue: addIssue,
         deleteIssue: deleteIssue,
         updateIssue: updateIssue,

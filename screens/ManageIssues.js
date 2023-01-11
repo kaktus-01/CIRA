@@ -1,9 +1,10 @@
 import { useContext, useLayoutEffect } from "react";
-import { View, StyleSheet, TextInput } from "react-native";
-import Button from "../components/UI/Button";
+import { View, StyleSheet } from "react-native";
+import IssueForm from "../components/ManageIssue/IssueForm";
 import IconButton from "../components/UI/IconButton";
 import { GlobalStyles } from "../constants/styles";
 import { IssuesContext } from "../store/issues-context";
+import { deleteIssue, storeIssue, updateIssue } from "../util/http";
 
 function ManageIssues({ route, navigation }) {
     const issuesCtx = useContext(IssuesContext);
@@ -12,13 +13,18 @@ function ManageIssues({ route, navigation }) {
 
     const isEditing = !!editedIssueId;
 
+    const selectedIssue = issuesCtx.issues.find(
+        (issue) => issue.id === editedIssueId
+    );
+
     useLayoutEffect(() => {
         navigation.setOptions({
             title: isEditing ? "Edit Issue" : "Add Issue",
         });
     }, [navigation, isEditing]);
 
-    function deleteIssueHandler() {
+    async function deleteIssueHandler() {
+        await deleteIssue(editedIssueId);
         issuesCtx.deleteIssue(editedIssueId);
         navigation.goBack();
     }
@@ -27,38 +33,26 @@ function ManageIssues({ route, navigation }) {
         navigation.goBack();
     }
 
-    function confirmHandler() {
+    async function confirmHandler(issueData) {
         if (isEditing) {
-            issuesCtx.updateIssue(editedIssueId, {
-                description: "test!!!!",
-                date: new Date("2022-05-21"),
-                resolved: "false",
-            });
+            issuesCtx.updateIssue(editedIssueId, issueData);
+            await updateIssue(editedIssueId, issueData);
         } else {
-            issuesCtx.addIssue({
-                description: "test",
-                date: new Date("2022-05-19"),
-                resolved: "true",
-            });
+            const id = await storeIssue(issueData);
+            issuesCtx.addIssue({ ...issueData, id: id });
         }
         navigation.goBack();
     }
 
     return (
         <View style={styles.container}>
-            <View style={styles.buttons}>
-                <Button
-                    style={styles.button}
-                    mode={"flat"}
-                    onPress={cancelHandler}
-                >
-                    Cancel
-                </Button>
-                <Button style={styles.button} onPress={confirmHandler}>
-                    {isEditing ? "Update" : "Add"}
-                </Button>
-            </View>
-            <IconButton />
+            <IssueForm
+                submitButtonLabel={isEditing ? "Update" : "Add"}
+                onSubmit={confirmHandler}
+                onCancel={cancelHandler}
+                defaultValues={selectedIssue}
+            />
+
             {isEditing && (
                 <View style={styles.deleteContainer}>
                     <IconButton
@@ -81,17 +75,8 @@ const styles = StyleSheet.create({
         padding: 24,
         backgroundColor: GlobalStyles.colors.primary800,
     },
-    buttons: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-    button: {
-        minWidth: 120,
-        marginHorizontal: 8,
-    },
     deleteContainer: {
-        marginTop: 16,
+        marginTop: 85,
         paddingTop: 8,
         borderTopWidth: 2,
         borderTopColor: GlobalStyles.colors.primary200,

@@ -41,8 +41,9 @@ const styles = StyleSheet.create({
         color: GlobalStyles.colors.primary200,
     },
     pressed: {
-        opacity: 0.75,
-        backgroundColor: GlobalStyles.colors.primary100,
-        borderRadius: 4,
+        opacity: 0.3,
+        backgroundColor: GlobalStyles.colors.accent500,
+        borderRadius: 10,
+        color: "yellow",
     },
 });

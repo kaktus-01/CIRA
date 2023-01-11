@@ -1,7 +1,6 @@
 import { View, StyleSheet, Text } from "react-native";
 import { GlobalStyles } from "../../constants/styles";
 import IssuesList from "./IssuesList";
-import IssuesSummary from "./IssuesSummary";
 
 function IssuesOutput({ issues, IssuesPeriod, fallbackText }) {
     let content = <Text style={styles.infoText}>{fallbackText}</Text>;
@@ -9,12 +8,7 @@ function IssuesOutput({ issues, IssuesPeriod, fallbackText }) {
     if (issues.length > 0) {
         content = <IssuesList issues={issues} />;
     }
-    return (
-        <View style={styles.container}>
-            <IssuesSummary issues={issues} periodName={IssuesPeriod} />
-            {content}
-        </View>
-    );
+    return <View style={styles.container}>{content}</View>;
 }
 
 export default IssuesOutput;

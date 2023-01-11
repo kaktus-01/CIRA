@@ -3,7 +3,7 @@ import { GlobalStyles } from "../../constants/styles";
 import { getFormattedDate } from "../../util/date";
 import { useNavigation } from "@react-navigation/native";
 
-function IssueItem({ id, description, date, resolved }) {
+function IssueItem({ id, title, date, geolocation, status }) {
     const navigation = useNavigation();
 
     function issuePressHandler() {
@@ -19,15 +19,10 @@ function IssueItem({ id, description, date, resolved }) {
         >
             <View style={styles.issueItem}>
                 <View>
-                    <Text style={[styles.textBase, styles.description]}>
-                        {description}
-                    </Text>
+                    <Text style={[styles.textBase, styles.title]}>{title}</Text>
                     <Text style={styles.textBase}>
                         {getFormattedDate(date)}
                     </Text>
-                </View>
-                <View style={styles.resolvedContainer}>
-                    <Text style={styles.resolved}>{resolved}</Text>
                 </View>
             </View>
         </Pressable>
@@ -56,26 +51,10 @@ const styles = StyleSheet.create({
         color: GlobalStyles.colors.primary50,
         fontFamily: "Futura",
     },
-    description: {
+    title: {
         fontSize: 16,
         marginBottom: 4,
         fontWeight: "bold",
         fontFamily: "Futura",
-    },
-    resolvedContainer: {
-        paddingHorizontal: 12,
-        paddingVertical: 4,
-        backgroundColor: "white",
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 4,
-        minWidth: 80,
-    },
-    resolved: {
-        color: GlobalStyles.colors.primary500,
-        fontWeight: "bold",
-        fontFamily: "Futura",
-        //If {RESOLVED} == true then green
-        //If {RESOLVED} == false then red
     },
 });

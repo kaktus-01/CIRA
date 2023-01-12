@@ -10,7 +10,7 @@ import IconButton from "./components/UI/IconButton";
 import IssuesContextProvider from "./store/issues-context";
 import CameraScreen from "./screens/CameraScreen";
 
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 

@@ -3,12 +3,16 @@ import { StyleSheet, View, Text, Image, ScrollView } from "react-native";
 import Input from "./Input";
 import Button from "../UI/Button";
 import { GlobalStyles } from "../../constants/styles";
-import LoadingOverlay from "../UI/LoadingOverlay";
 import { ActivityIndicator } from "@react-native-material/core";
-import DropDownPicker from "react-native-dropdown-picker";
 import DropdownMenu from "../UI/DropdownMenu";
 
-function IssueForm({ submitButtonLabel, onCancel, onSubmit, defaultValues }) {
+function IssueForm({
+    submitButtonLabel,
+    onCancel,
+    onSubmit,
+    defaultValues,
+    source,
+}) {
     const [inputValues, setInputValues] = useState({
         title: defaultValues ? defaultValues.title : "",
         date: defaultValues
@@ -18,7 +22,7 @@ function IssueForm({ submitButtonLabel, onCancel, onSubmit, defaultValues }) {
         category: defaultValues ? defaultValues.category : "",
         geolocation: defaultValues ? defaultValues.geolocation : "",
         status: defaultValues ? defaultValues.status : "",
-        picture: "",
+        picture: source,
     });
 
     function inputChangedHandler(inputIdentifier, enteredValue) {
@@ -38,7 +42,7 @@ function IssueForm({ submitButtonLabel, onCancel, onSubmit, defaultValues }) {
             category: inputValues.category,
             geolocation: "Next to the bin under the bridge. Obviously",
             status: "reported",
-            picture: "",
+            picture: source,
         };
 
         onSubmit(issueData);
@@ -48,14 +52,7 @@ function IssueForm({ submitButtonLabel, onCancel, onSubmit, defaultValues }) {
         <ScrollView>
             <View style={styles.form}>
                 <Text style={styles.title}>New Report</Text>
-                <ActivityIndicator style={styles.image}>
-                    <Image
-                        style={styles.image}
-                        source={{
-                            uri: "https://upload.wikimedia.org/wikipedia/commons/d/dc/Penis_asiatischer_Elefant.JPG",
-                        }}
-                    />
-                </ActivityIndicator>
+                <Image style={styles.image} source={source} />
                 <View style={styles.inputsRow}>
                     <Input
                         style={styles.rowInput}
@@ -98,7 +95,7 @@ function IssueForm({ submitButtonLabel, onCancel, onSubmit, defaultValues }) {
                 />
                 <Text style={styles.categoryTitle}>Category</Text>
                 <View style={styles.rowButtonInput}>
-                    <DropdownMenu zIndex={100000} autoScroll={true} />
+                    <DropdownMenu style={styles.dropDown} autoScroll={true} />
                 </View>
                 <View style={styles.buttons}>
                     <Button
@@ -170,5 +167,8 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         borderRadius: 10,
         paddingBottom: 700,
+    },
+    dropDown: {
+        paddingBottom: 20,
     },
 });

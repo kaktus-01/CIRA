@@ -6,7 +6,7 @@ import { GlobalStyles } from "../constants/styles";
 import { IssuesContext } from "../store/issues-context";
 import { deleteIssue, storeIssue, updateIssue } from "../util/http";
 
-function ManageIssues({ route, navigation }) {
+function ManageIssues({ route, navigation, source }) {
     const issuesCtx = useContext(IssuesContext);
 
     const editedIssueId = route.params?.issueId;
@@ -51,6 +51,7 @@ function ManageIssues({ route, navigation }) {
                 onSubmit={confirmHandler}
                 onCancel={cancelHandler}
                 defaultValues={selectedIssue}
+                source={source}
             />
 
             {isEditing && (

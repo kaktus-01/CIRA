@@ -52,7 +52,12 @@ function IssueForm({
         <ScrollView>
             <View style={styles.form}>
                 <Text style={styles.title}>New Report</Text>
-                <Image style={styles.image} source={source} />
+                <Image
+                    style={styles.image}
+                    source={{
+                        uri: "https://images.unsplash.com/photo-1537884944318-390069bb8665?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8MXw5NzY4Njc0fHxlbnwwfHx8fA%3D%3D&w=1000&q=80",
+                    }}
+                />
                 <View style={styles.inputsRow}>
                     <Input
                         style={styles.rowInput}
